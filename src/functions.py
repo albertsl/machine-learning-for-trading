@@ -33,8 +33,21 @@ def ROI(symbol, investment, start_date="1900-01-01", end_date="2200-01-01"):
     earnings = end_value-investment
     return (earnings/investment)*100
 
+def get_bollinger_bands(df, wd):
+    rm = pd.rolling_mean(df, window=wd)
+    rstd = pd.rolling_std(df, window=wd)
+    upper_band = rm + 2 * rstd
+    lower_band = rm - 2 * rstd
+    return upper_band, lower_band
+
+def get_daily_returns(df):
+    daily_returns = df.copy()
+    daily_returns[1:] = ((df[1:]/df[:-1].values)-1)*100
+    daily_returns.ix[0,:] = 0
+    return daily_returns
+
 #Data management
-def join_multiple_adj_close(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
+def get_data(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
     #Let's create an empty DataFrame
     dates = pd.date_range(start_date, end_date)
     df1 = pd.DataFrame(index=dates)
@@ -45,36 +58,73 @@ def join_multiple_adj_close(symbols_list, start_date="1900-01-01", end_date="220
         dfsymbol= dfsymbol.rename(columns={"Adj Close": symbol})
         df1 = df1.join(dfsymbol, how="inner")
 
-    return df1
+    df2 = df1.ix[::-1]
+    return df2
 
 def normalize_data(df):
-    return (df/df.ix[-1,:]-1)*100
+    return (df/df.ix[0,:]-1)*100
 
 #Plotting functions
-def plot_adj_close(symbol):
-    df = load_symbol_adj_close(symbol)
-    df['Adj Close'].plot()
-    plt.xlabel('Day number')
+def plot_adj_close(symbol, wd=None, start_date="1900-01-01", end_date="2200-01-01"):
+    df = get_data([symbol], start_date, end_date)
+    df[symbol].plot()
+
+    if wd:
+        rm = pd.rolling_mean(df[symbol], window=wd)
+        rm.plot()
+    plt.xlabel('Day')
     plt.ylabel('Price')
     plt.title('Adjusted close of {}'.format(symbol))
     plt.grid(True)
     plt.show()
 
 def plot_adj_close_multiple(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
-    df = join_multiple_adj_close(symbols_list, start_date, end_date)
+    df = get_data(symbols_list, start_date, end_date)
     df.plot()
-    plt.xlabel('Day number')
+    plt.xlabel('Day')
     plt.ylabel('Price')
     plt.title('Adjusted close')
     plt.grid(True)
     plt.show()
 
 def plot_adj_close_multiple_normalized(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
-    df = join_multiple_adj_close(symbols_list, start_date, end_date)
+    df = get_data(symbols_list, start_date, end_date)
     df = normalize_data(df)
     df.plot()
-    plt.xlabel('Day number')
+    plt.xlabel('Day')
     plt.ylabel('%')
     plt.title('Adjusted close')
     plt.grid(True)
+    plt.show()
+
+def plot_bollinger_bands(symbol, wd, start_date="1900-01-01", end_date="2200-01-01"):
+    #Get data
+    df = get_data([symbol], start_date, end_date)
+    upper_band, lower_band = get_bollinger_bands(df[symbol],wd)
+    rm = pd.rolling_mean(df[symbol], window=wd)
+
+    #Prepare the plot
+    df[symbol].plot(label=symbol)
+    rm.plot(label="Rolling mean")
+    upper_band.plot(label="Upper Bollinger Band")
+    lower_band.plot(label="Lower Bollinger Band")
+    plt.xlabel('Day')
+    plt.ylabel('Price')
+    plt.title('Adjusted close of {0} + Bollinger Band {1} days'.format(symbol, wd))
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+def plot_daily_returns(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
+    #get data
+    df = get_data(symbols_list, start_date, end_date)
+    dr = get_daily_returns(df)
+
+    #plot
+    daily_returns.plot()
+    plt.xlabel('Day')
+    plt.ylabel('% daily return')
+    plt.title('Daily returns')
+    plt.grid(True)
+    plt.legend()
     plt.show()
