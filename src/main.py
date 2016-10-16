@@ -14,7 +14,7 @@ def test_run(symbols_list):
 
 def test_run2(symbols_list):
     dfadjclose = functions.join_multiple_adj_close(symbols_list, '2012-01-22', '2017-01-26')
-    functions.plot_adj_close_multiple(symbols_list)
+    functions.plot_adj_close_multiple_normalized(symbols_list, start_date='2013-01-01')
 
 if __name__ == '__main__':
     symbols_list = ['AAPL','IBM','HCP','IAG.MC','ELE.MC']
