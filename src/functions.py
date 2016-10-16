@@ -19,15 +19,19 @@ def get_mean_volume(symbol):
     df = load_symbol(symbol)
     return df['Volume'].mean()
 
-# Not working yet
-# def ROE(symbol, start_date, end_date, investment):
-#     df = load_symbol_adj_close(symbol)
-#     dates = pd.date_range(start_date, end_date)
-#     df1 = pd.DataFrame(index=dates)
-#     df1 = df1.join(df, how="inner")
-#     print df1
-#     print df1.first("1D")
-#     print df1.last("1D")
+def ROI(symbol, investment, start_date="1900-01-01", end_date="2200-01-01"):
+    """Return of investment"""
+    df = load_symbol_adj_close(symbol)
+    dates = pd.date_range(start_date, end_date)
+    df1 = pd.DataFrame(index=dates)
+    df1 = df1.join(df, how="inner")
+
+    first_value = df1.ix[-1, "Adj Close"]
+    last_value = df1.ix[0, "Adj Close"]
+
+    end_value = (investment/first_value)*last_value
+    earnings = end_value-investment
+    return (earnings/investment)*100
 
 #Data management
 def join_multiple_adj_close(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
