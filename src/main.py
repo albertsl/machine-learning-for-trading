@@ -24,6 +24,9 @@ def test_run4(symbols_list):
     functions.plot_daily_returns(symbols_list)
     print functions.get_today()
 
+def test_run5(symbols_list):
+    print functions.plot_daily_returns(symbols_list[::-1])
+
 if __name__ == '__main__':
     symbols_list = ['AAPL','IBM','HCP','IAG.MC','ELE.MC']
-    test_run4(symbols_list)
+    test_run5(symbols_list)

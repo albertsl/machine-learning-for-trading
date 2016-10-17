@@ -127,6 +127,10 @@ def plot_daily_returns(symbols_list, start_date="1900-01-01", end_date="2200-01-
     df = get_data(symbols_list, start_date, end_date)
     dr = get_daily_returns(df)
 
+    #calculate mean and std dev
+    mean = dr.mean()
+    std = dr.std()
+
     #plot
     dr.plot()
     plt.xlabel('Day')
@@ -135,3 +139,9 @@ def plot_daily_returns(symbols_list, start_date="1900-01-01", end_date="2200-01-
     plt.grid(True)
     plt.legend()
     plt.show()
+    for symbol in symbols_list:
+        dr[symbol].hist(bins=100, label=symbol)
+    plt.legend()
+    plt.show()
+
+    return mean, std
