@@ -1,3 +1,5 @@
+import datetime
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -64,6 +66,11 @@ def get_data(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
 def normalize_data(df):
     return (df/df.ix[0,:]-1)*100
 
+def get_today():
+    td = datetime.datetime.today()
+    year, month, day = td.year, td.month, td.day
+    return "{}-{}-{}".format(year, month, day)
+
 #Plotting functions
 def plot_adj_close(symbol, wd=None, start_date="1900-01-01", end_date="2200-01-01"):
     df = get_data([symbol], start_date, end_date)
@@ -121,7 +128,7 @@ def plot_daily_returns(symbols_list, start_date="1900-01-01", end_date="2200-01-
     dr = get_daily_returns(df)
 
     #plot
-    daily_returns.plot()
+    dr.plot()
     plt.xlabel('Day')
     plt.ylabel('% daily return')
     plt.title('Daily returns')

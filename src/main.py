@@ -22,6 +22,8 @@ def test_run3(symbols_list):
 
 def test_run4(symbols_list):
     functions.plot_daily_returns(symbols_list)
+    print functions.get_today()
+
 if __name__ == '__main__':
     symbols_list = ['AAPL','IBM','HCP','IAG.MC','ELE.MC']
     test_run4(symbols_list)
