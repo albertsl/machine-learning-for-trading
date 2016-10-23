@@ -1,16 +1,40 @@
 import datetime
+import os.path
+import re
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from pandas_datareader import data
+
 
 #Loading data functions
+def download_data(symbol):
+    start = "2010-01-01"
+    end = get_today()
+
+    fileName = "data/{}_{}.csv".format(symbol, end)
+
+    if not os.path.isfile(fileName):
+        #Delete previous files
+        for f in os.listdir("data"):
+            if re.search("{}_....-..-...csv".format(symbol), f) and f != fileName:
+                os.remove(os.path.join("data", f))
+        try:
+            df = data.DataReader(symbol, 'yahoo', start, end)
+            df.to_csv(fileName)
+        except:
+            print "Cannot download data from {}".format(symbol)
+
 def load_symbol(symbol):
-    return pd.read_csv("data/{}.csv".format(symbol), index_col="Date",
-    parse_dates=True)
+    download_data(symbol)
+    return pd.read_csv("data/{}_{}.csv".format(symbol, get_today()),
+                            index_col="Date", parse_dates=True)
 
 def load_symbol_adj_close(symbol):
-    return pd.read_csv("data/{}.csv".format(symbol), index_col="Date",
-    usecols=["Date", "Adj Close"], parse_dates=True)
+    download_data(symbol)
+    return pd.read_csv("data/{}_{}.csv".format(symbol, get_today()),
+                            index_col="Date", usecols=["Date", "Adj Close"],
+                            parse_dates=True)
 
 #Calculating things functions
 def get_max_close(symbol):
