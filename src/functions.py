@@ -52,8 +52,8 @@ def ROI(symbol, investment, start_date="1900-01-01", end_date="2200-01-01"):
     df1 = pd.DataFrame(index=dates)
     df1 = df1.join(df, how="inner")
 
-    first_value = df1.ix[-1, "Adj Close"]
-    last_value = df1.ix[0, "Adj Close"]
+    first_value = df1.ix[0, "Adj Close"]
+    last_value = df1.ix[-1, "Adj Close"]
 
     end_value = (investment/first_value)*last_value
     earnings = end_value-investment
@@ -84,8 +84,7 @@ def get_data(symbols_list, start_date="1900-01-01", end_date="2200-01-01"):
         dfsymbol= dfsymbol.rename(columns={"Adj Close": symbol})
         df1 = df1.join(dfsymbol, how="inner")
 
-    df2 = df1.ix[::-1]
-    return df2
+    return df1
 
 def normalize_data(df):
     return (df/df.ix[0,:]-1)*100
@@ -131,6 +130,7 @@ def plot_adj_close_multiple_normalized(symbols_list, start_date="1900-01-01", en
 def plot_bollinger_bands(symbol, wd, start_date="1900-01-01", end_date="2200-01-01"):
     #Get data
     df = get_data([symbol], start_date, end_date)
+    print df
     upper_band, lower_band = get_bollinger_bands(df[symbol],wd)
     rm = pd.rolling_mean(df[symbol], window=wd)
 

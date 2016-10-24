@@ -4,8 +4,10 @@
 # http://finance.yahoo.com/quote/HCP/history
 
 import pandas as pd
-import functions
 import matplotlib.pyplot as plt
+
+import functions
+import mathematical_model
 
 # def test_run(symbols_list):
 #     print df1.ix['2016-09-30':'2016-09-01']
@@ -39,7 +41,9 @@ MC_Madrid_symbols = []
 MAB_symbols = []
 
 def main():
-    functions.plot_adj_close("IAG.MC")
+    # functions.plot_bollinger_bands("IAG.MC", 20)
+    # functions.plot_bollinger_bands("ELE.MC", 20)
+    print functions.ROI("IAG.MC", 1200, "2016-10-11")
 
 if __name__ == '__main__':
     # symbols_list = ['AAPL','IBM','HCP','IAG.MC','ELE.MC']
